@@ -24,6 +24,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.68.0",
     "@clerk/nextjs": "^6.35.0",
     "bullmq": "^5.63.0",
     "class-variance-authority": "^0.7.1",
@@ -31,6 +32,7 @@
     "drizzle-orm": "^0.44.7",
     "ioredis": "^5.8.2",
     "next": "^16.0.2",
+    "openai": "^6.8.1",
     "postgres": "^3.4.7",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
