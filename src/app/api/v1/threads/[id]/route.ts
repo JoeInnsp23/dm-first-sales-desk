@@ -26,7 +26,8 @@ const updateThreadSchema = z.object({
  */
 export const GET = withErrorHandling(
   withAuth(async (req: NextRequest, { params, auth }) => {
-    const id = params?.id as string;
+    const resolvedParams = await params;
+    const id = resolvedParams?.id as string;
     const thread = await ThreadsService.getById(id, auth.accountId);
     return successResponse(thread);
   })
@@ -38,7 +39,8 @@ export const GET = withErrorHandling(
  */
 export const PATCH = withErrorHandling(
   withAuth(async (req: NextRequest, { params, auth }) => {
-    const id = params?.id as string;
+    const resolvedParams = await params;
+    const id = resolvedParams?.id as string;
     const body = await validateBody(req, updateThreadSchema);
 
     const updates: any = { ...body };
@@ -59,7 +61,8 @@ export const PATCH = withErrorHandling(
  */
 export const DELETE = withErrorHandling(
   withAuth(async (req: NextRequest, { params, auth }) => {
-    const id = params?.id as string;
+    const resolvedParams = await params;
+    const id = resolvedParams?.id as string;
     const thread = await ThreadsService.archive(id, auth.accountId);
     return successResponse(thread);
   })

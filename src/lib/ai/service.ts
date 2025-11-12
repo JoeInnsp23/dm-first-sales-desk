@@ -2,6 +2,7 @@ import { getAIClient, AIModel } from "./client";
 import { db } from "@/lib/db";
 import { aiSuggestions } from "@/lib/db/schema";
 import { MessagesService, ThreadsService } from "@/lib/services";
+import { eq } from "drizzle-orm";
 
 export type SentimentType = "positive" | "neutral" | "negative";
 
@@ -249,6 +250,6 @@ Respond with JSON:
         feedbackNote,
         reviewedAt: new Date(),
       })
-      .where(aiSuggestions.id === suggestionId);
+      .where(eq(aiSuggestions.id, suggestionId));
   }
 }

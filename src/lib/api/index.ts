@@ -5,14 +5,14 @@ import { ZodError, z } from "zod";
 export type ApiHandler<T = any> = (
   req: NextRequest,
   context: {
-    params?: Record<string, string>;
+    params?: Promise<Record<string, string>> | Record<string, string>;
   }
 ) => Promise<NextResponse<T>>;
 
 export type AuthenticatedApiHandler<T = any> = (
   req: NextRequest,
   context: {
-    params?: Record<string, string>;
+    params?: Promise<Record<string, string>> | Record<string, string>;
     auth: Awaited<ReturnType<typeof requireAuth>>;
   }
 ) => Promise<NextResponse<T>>;
@@ -71,7 +71,7 @@ export function withErrorHandling<T>(
   handler: ApiHandler<T>
 ): (
   req: NextRequest,
-  context: { params?: Record<string, string> }
+  context: { params?: Promise<Record<string, string>> | Record<string, string> }
 ) => Promise<NextResponse> {
   return async (req, context) => {
     try {
@@ -162,7 +162,7 @@ export async function validateBody<T extends z.ZodType>(
     return schema.parse(body);
   } catch (error) {
     if (error instanceof ZodError) {
-      throw new ValidationError("Validation error", error.flatten().fieldErrors);
+      throw new ValidationError("Validation error", error.flatten().fieldErrors as Record<string, string[]>);
     }
     throw new BadRequestError("Invalid JSON body");
   }
@@ -180,7 +180,7 @@ export function validateQuery<T extends z.ZodType>(
     return schema.parse(params);
   } catch (error) {
     if (error instanceof ZodError) {
-      throw new ValidationError("Validation error", error.flatten().fieldErrors);
+      throw new ValidationError("Validation error", error.flatten().fieldErrors as Record<string, string[]>);
     }
     throw new BadRequestError("Invalid query parameters");
   }

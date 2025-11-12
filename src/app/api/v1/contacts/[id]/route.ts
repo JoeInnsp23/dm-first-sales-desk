@@ -24,7 +24,8 @@ const updateContactSchema = z.object({
  */
 export const GET = withErrorHandling(
   withAuth(async (req: NextRequest, { params, auth }) => {
-    const id = params?.id as string;
+    const resolvedParams = await params;
+    const id = resolvedParams?.id as string;
     const contact = await ContactsService.getById(id, auth.accountId);
     return successResponse(contact);
   })
@@ -36,7 +37,8 @@ export const GET = withErrorHandling(
  */
 export const PATCH = withErrorHandling(
   withAuth(async (req: NextRequest, { params, auth }) => {
-    const id = params?.id as string;
+    const resolvedParams = await params;
+    const id = resolvedParams?.id as string;
     const body = await validateBody(req, updateContactSchema);
 
     const contact = await ContactsService.update(id, auth.accountId, body);

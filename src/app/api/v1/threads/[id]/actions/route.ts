@@ -35,7 +35,8 @@ const actionSchema = z.object({
  */
 export const POST = withErrorHandling(
   withAuth(async (req: NextRequest, { params, auth }) => {
-    const threadId = params?.id as string;
+    const resolvedParams = await params;
+    const threadId = resolvedParams?.id as string;
     const body = await validateBody(req, actionSchema);
 
     let thread;

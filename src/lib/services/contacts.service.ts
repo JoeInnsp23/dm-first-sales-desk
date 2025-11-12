@@ -225,12 +225,12 @@ export class ContactsService {
         primary.shopifyCustomerId || secondary.shopifyCustomerId,
       avatarUrl: primary.avatarUrl || secondary.avatarUrl,
       profileData: {
-        ...secondary.profileData,
-        ...primary.profileData,
+        ...(secondary.profileData || {}),
+        ...(primary.profileData || {}),
       },
       customFields: {
-        ...secondary.customFields,
-        ...primary.customFields,
+        ...(secondary.customFields || {}),
+        ...(primary.customFields || {}),
       },
       tags: Array.from(
         new Set([...(primary.tags || []), ...(secondary.tags || [])])

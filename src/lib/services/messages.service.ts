@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { messages, threads } from "@/lib/db/schema";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, lt } from "drizzle-orm";
 import { NotFoundError } from "@/lib/api";
 import { ThreadsService } from "./threads.service";
 
@@ -118,7 +118,7 @@ export class MessagesService {
     // If beforeId is provided, get messages before that message (for cursor pagination)
     if (beforeId) {
       const beforeMessage = await this.getById(beforeId, accountId);
-      conditions.push(messages.sentAt < beforeMessage.sentAt);
+      conditions.push(lt(messages.sentAt, beforeMessage.sentAt));
     }
 
     const results = await db.query.messages.findMany({

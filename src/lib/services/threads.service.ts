@@ -21,6 +21,8 @@ export type UpdateThreadInput = {
   assignedToId?: string | null;
   isRead?: boolean;
   isStarred?: boolean;
+  hasUnreadMessages?: boolean;
+  isSlaCritical?: boolean;
   tags?: string[];
   snoozedUntil?: Date | null;
   metadata?: Record<string, any>;

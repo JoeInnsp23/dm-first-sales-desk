@@ -39,7 +39,8 @@ const sendMessageSchema = z.object({
  */
 export const GET = withErrorHandling(
   withAuth(async (req: NextRequest, { params, auth }) => {
-    const threadId = params?.id as string;
+    const resolvedParams = await params;
+    const threadId = resolvedParams?.id as string;
     const query = validateQuery(req, listMessagesSchema);
 
     const messages = await MessagesService.listByThread(
@@ -62,7 +63,8 @@ export const GET = withErrorHandling(
  */
 export const POST = withErrorHandling(
   withAuth(async (req: NextRequest, { params, auth }) => {
-    const threadId = params?.id as string;
+    const resolvedParams = await params;
+    const threadId = resolvedParams?.id as string;
     const body = await validateBody(req, sendMessageSchema);
 
     // Get thread to get channel connection info
