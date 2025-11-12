@@ -1,11 +1,16 @@
 #!/usr/bin/env node
 /**
  * Worker process for processing background jobs
- * Run this as a separate process: node src/lib/queue/worker.ts
+ * Run this as a separate process: npm run worker
+ * Or in development with auto-reload: npm run worker:dev
  */
 
 import { createInboundMessageWorker } from "./workers/inbound-message.worker";
 import { createOutboundMessageWorker } from "./workers/outbound-message.worker";
+import { createAISuggestionsWorker } from "./workers/ai-suggestions.worker";
+import { createOrdersSyncWorker } from "./workers/orders-sync.worker";
+import { createTasksNotificationsWorker } from "./workers/tasks-notifications.worker";
+import { createExportsWorker } from "./workers/exports.worker";
 
 console.log("🚀 Starting background workers...");
 
@@ -13,10 +18,19 @@ console.log("🚀 Starting background workers...");
 const workers = [
   createInboundMessageWorker(),
   createOutboundMessageWorker(),
-  // Add more workers as needed
+  createAISuggestionsWorker(),
+  createOrdersSyncWorker(),
+  createTasksNotificationsWorker(),
+  createExportsWorker(),
 ];
 
 console.log(`✓ Started ${workers.length} workers`);
+console.log("  - Inbound Message Worker (concurrency: 10)");
+console.log("  - Outbound Message Worker (concurrency: 5)");
+console.log("  - AI Suggestions Worker (concurrency: 3)");
+console.log("  - Orders Sync Worker (concurrency: 5)");
+console.log("  - Tasks/Notifications Worker (concurrency: 10)");
+console.log("  - Exports Worker (concurrency: 2)");
 
 // Graceful shutdown
 process.on("SIGTERM", async () => {

@@ -146,6 +146,225 @@ The application follows an event-driven architecture:
 5. **API Layer**: RESTful API with multi-tenant security
 6. **UI Layer**: React Server Components with client interactivity
 
+## Deployment
+
+### Environment Variables
+
+Required for all deployments:
+
+```bash
+# Database (required)
+DATABASE_URL="postgresql://user:password@host:5432/database"
+
+# Auth (required)
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_live_xxx"
+CLERK_SECRET_KEY="sk_live_xxx"
+
+# App (required)
+NEXT_PUBLIC_APP_URL="https://yourdomain.com"
+NODE_ENV="production"
+```
+
+Optional but recommended:
+
+```bash
+# Redis (required for background jobs)
+REDIS_URL="redis://host:6379"
+
+# AI (required for AI features)
+ANTHROPIC_API_KEY="sk-ant-xxx"
+# or
+OPENAI_API_KEY="sk-xxx"
+
+# Channel Integrations (per channel)
+WHATSAPP_API_TOKEN="xxx"
+WHATSAPP_PHONE_NUMBER_ID="xxx"
+INSTAGRAM_APP_ID="xxx"
+INSTAGRAM_APP_SECRET="xxx"
+TIKTOK_APP_KEY="xxx"
+TIKTOK_APP_SECRET="xxx"
+SHOPIFY_STORE_DOMAIN="your-store.myshopify.com"
+SHOPIFY_ACCESS_TOKEN="xxx"
+
+# Storage (for exports and attachments)
+S3_BUCKET="your-bucket"
+S3_ACCESS_KEY_ID="xxx"
+S3_SECRET_ACCESS_KEY="xxx"
+S3_REGION="us-east-1"
+```
+
+### Deployment on Vercel
+
+1. **Push your code to GitHub**
+
+2. **Import project to Vercel**:
+   - Connect your GitHub repository
+   - Vercel will auto-detect Next.js
+
+3. **Configure environment variables**:
+   - Add all required environment variables in Vercel dashboard
+   - Mark sensitive variables as "Sensitive"
+
+4. **Configure build settings**:
+   ```
+   Build Command: npm run build
+   Output Directory: .next
+   Install Command: npm install
+   ```
+
+5. **Deploy**:
+   - Click "Deploy"
+   - Vercel will build and deploy automatically
+
+6. **Set up PostgreSQL**:
+   - Use Vercel Postgres or external provider (Supabase, Neon, Railway)
+   - Add `DATABASE_URL` to environment variables
+
+7. **Set up Redis** (for background jobs):
+   - Use Upstash Redis (serverless) or external provider
+   - Add `REDIS_URL` to environment variables
+
+8. **Run database migrations**:
+   ```bash
+   # From local machine with production DATABASE_URL
+   npm run db:push
+   ```
+
+9. **Deploy background workers separately**:
+   - Workers cannot run on Vercel (serverless)
+   - Deploy to Railway, Render, or any container platform
+   - Use the same environment variables
+   - Run: `npm run worker`
+
+### Deployment on Railway
+
+Railway supports both the web app and background workers in one project.
+
+1. **Create new project** from GitHub repo
+
+2. **Add PostgreSQL database**:
+   - Add "PostgreSQL" service
+   - `DATABASE_URL` will be auto-configured
+
+3. **Add Redis database**:
+   - Add "Redis" service
+   - `REDIS_URL` will be auto-configured
+
+4. **Configure web service**:
+   ```
+   Build Command: npm run build
+   Start Command: npm start
+   ```
+
+5. **Add worker service**:
+   - Create new service from same repo
+   - Set start command: `npm run worker`
+   - Share same environment variables
+
+6. **Add environment variables**:
+   - Configure all required variables in Railway dashboard
+
+7. **Deploy**:
+   - Railway will auto-deploy on git push
+
+### Deployment on Render
+
+1. **Create Web Service**:
+   - Connect GitHub repository
+   - Build Command: `npm run build`
+   - Start Command: `npm start`
+
+2. **Create Background Worker**:
+   - Create new "Background Worker" service
+   - Build Command: `npm install`
+   - Start Command: `npm run worker`
+
+3. **Add PostgreSQL**:
+   - Create PostgreSQL database
+   - Copy connection string to `DATABASE_URL`
+
+4. **Add Redis**:
+   - Create Redis instance
+   - Copy connection string to `REDIS_URL`
+
+5. **Configure environment variables** in Render dashboard
+
+### Deployment with Docker
+
+1. **Build the image**:
+   ```bash
+   docker build -t dm-sales-desk .
+   ```
+
+2. **Run web service**:
+   ```bash
+   docker run -p 3000:3000 \
+     -e DATABASE_URL="postgresql://..." \
+     -e REDIS_URL="redis://..." \
+     -e CLERK_SECRET_KEY="..." \
+     dm-sales-desk
+   ```
+
+3. **Run workers**:
+   ```bash
+   docker run \
+     -e DATABASE_URL="postgresql://..." \
+     -e REDIS_URL="redis://..." \
+     dm-sales-desk npm run worker
+   ```
+
+4. **Use Docker Compose** (recommended):
+   ```yaml
+   version: '3.8'
+   services:
+     web:
+       build: .
+       ports:
+         - "3000:3000"
+       env_file: .env
+
+     worker:
+       build: .
+       command: npm run worker
+       env_file: .env
+
+     postgres:
+       image: postgres:14
+       environment:
+         POSTGRES_DB: dm_sales_desk
+         POSTGRES_USER: user
+         POSTGRES_PASSWORD: password
+
+     redis:
+       image: redis:7-alpine
+   ```
+
+### Post-Deployment Setup
+
+1. **Configure webhooks**:
+   - WhatsApp: `https://yourdomain.com/api/webhooks/whatsapp`
+   - Instagram: `https://yourdomain.com/api/webhooks/instagram`
+   - TikTok Shop: `https://yourdomain.com/api/webhooks/tiktok`
+   - Shopify: `https://yourdomain.com/api/webhooks/shopify`
+
+2. **Test webhook endpoints**:
+   ```bash
+   curl https://yourdomain.com/api/webhooks/whatsapp?hub.mode=subscribe&hub.verify_token=xxx&hub.challenge=test
+   ```
+
+3. **Monitor background workers**:
+   - Check worker logs for job processing
+   - Monitor Redis queues
+
+4. **Set up monitoring** (recommended):
+   - Use Sentry for error tracking
+   - Use Datadog/New Relic for APM
+   - Monitor queue health and job failures
+
+## API Documentation
+
+See [API.md](./API.md) for detailed API documentation.
+
 ## License
 
 ISC
