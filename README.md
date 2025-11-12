@@ -76,6 +76,33 @@ The application uses a comprehensive multi-tenant schema with the following key 
 - **AI Suggestions**: Store and track AI-generated replies and insights
 - **Domain Events**: Audit log for debugging and analytics
 
+## Pages & Features
+
+### 📊 Dashboard (`/dashboard`)
+- **Key Metrics**: Active conversations, total contacts, conversion rate, SLA at-risk
+- **Pipeline Visualization**: Progress bars showing distribution across stages
+- **Quick Actions**: Needs attention and recent activity summaries
+
+### 📥 Unified Inbox (`/inbox`)
+- **Thread List**: All conversations with channel indicators, unread badges, SLA warnings
+- **Message View**: Full conversation history with bubble UI
+- **Compose**: Send messages with AI suggestions
+- **Actions**: Star, close, archive, assign threads
+- **Search**: Find conversations quickly
+
+### 👥 Contacts (`/contacts`)
+- **Contact Cards**: Grid view with all contact information
+- **Multi-Channel**: Shows which platforms each contact uses
+- **Search**: Find contacts by name, email, or phone
+- **Tags**: Visual tag system for categorization
+- **Last Contacted**: Relative timestamps for engagement tracking
+
+### 📈 Sales Pipeline (`/pipeline`)
+- **Kanban Board**: Four-column view (Lead → Engaged → Converted → Lost)
+- **Visual Cards**: Thread cards with contact info and channel indicators
+- **Stage Metrics**: Count and percentage per stage
+- **Quick Navigation**: Click cards to jump to inbox
+
 ## Available Scripts
 
 - `npm run dev` - Start development server
@@ -87,6 +114,8 @@ The application uses a comprehensive multi-tenant schema with the following key 
 - `npm run db:push` - Push schema changes to database
 - `npm run db:migrate` - Run migrations
 - `npm run db:studio` - Open Drizzle Studio
+- `npm run worker` - Start background job workers
+- `npm run worker:dev` - Start workers in development mode
 
 ## Project Structure
 
