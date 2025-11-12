@@ -5,7 +5,7 @@ export default async function Home() {
   const auth = await getAuthContext();
 
   if (auth) {
-    redirect("/inbox");
+    redirect("/dashboard");
   } else {
     redirect("/sign-in");
   }
